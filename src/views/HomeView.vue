@@ -4,11 +4,22 @@
     <div class="max-w-xl mx-auto">
       <form @submit.prevent="handleSearch" class="flex items-center space-x-2">
         <input
-          v-model="searchQuery"
+          v-model="searchTitle"
           type="text"
           placeholder="Найти фильм..."
           class="flex-1 p-2 rounded-lg border border-gray-600 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+        <select
+          :value="store.typeFilter"
+          @change="handleTypeChange($event.target.value)"
+          class="p-3 rounded-lg border-2 border-gray-700 bg-gray-900 text-white focus:outline-none focus:border-blue-500 cursor-pointer"
+        >
+          <option value="">Все типы</option>
+          <option value="movie">Фильмы</option>
+          <option value="series">Сериалы</option>
+          <option value="episode">Эпизоды</option>
+        </select>
+
         <button
           type="submit"
           class="p-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition duration-300"
@@ -41,7 +52,7 @@
         :to="{ name: 'movie-detail', params: { id: movie.imdbID } }"
          class="bg-gray-700 rounded-lg shadow-md overflow-hidden hover:scale-105 transition-transform duration-300"
         >
-        <img :src="movie.Poster" :alt="movie.Title" class="w-full h-64 object-cover" />
+        <img :src="movie.Poster !== 'N/A' ? movie.Poster : '/placeholder.png'" :alt="movie.Title" class="w-full h-64 object-cover"  @error="e => e.target.src = '/placeholder.png'" />
         <div class="p-4">
           <h2 class="text-lg font-bold">{{ movie.Title }}</h2>
           <p class="text-sm text-gray-400">{{ movie.Year }}</p>
@@ -83,6 +94,7 @@
 
 
 
+
   </div>
 </template>
 
@@ -90,14 +102,21 @@
 import { ref } from 'vue';
 import { useMovieStore } from '@/stores/movieStore';
 
-const searchQuery = ref('');
+
+
+const searchTitle = ref('');
 const store = useMovieStore();
 const searchPerformed = ref(false);
+
 const handleSearch = () => {
     searchPerformed.value = true;
-    store.searchMovies(searchQuery.value, 1);
+    store.searchMovies(searchTitle.value, 1);
+};
+const handleTypeChange = (type) => {
+  store.setTypeFilter(type);
+  store.searchMovies(searchTitle.value, 1); 
 };
 const goToPage = (page) => {
-  store.searchMovies(searchQuery.value, page);
+  store.searchMovies(searchTitle.value, page);
 };
 </script>

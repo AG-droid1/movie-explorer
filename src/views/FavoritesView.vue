@@ -10,7 +10,7 @@
         >
           &times;
         </button>
-        <img :src="movie.Poster" :alt="movie.Title" class="w-full h-64 object-cover" />
+        <img :src="movie.Poster !== 'N/A' ? movie.Poster : '/placeholder.png'" :alt="movie.Title" class="w-full h-64 object-cover" @error="e => e.target.src = '/placeholder.png'"  />
         <div class="p-4">
           <h2 class="text-lg font-bold">{{ movie.Title }}</h2>
           <p class="text-sm text-gray-400">{{ movie.Year }}</p>

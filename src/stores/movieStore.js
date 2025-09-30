@@ -12,6 +12,7 @@ export const useMovieStore = defineStore('movie', () => {
   const currentPage = ref(1);
   const sortKey = ref(null); 
   const sortDirection = ref('asc');
+  const typeFilter = ref('');
 
    //getter
   const sortedMovies = computed(() => {
@@ -34,21 +35,33 @@ export const useMovieStore = defineStore('movie', () => {
   });
 
   //actions
-  const searchMovies = async (query, page = 1) => {
-    if (!query) return;
+    const setTypeFilter = (type) => {
+      typeFilter.value = type;
+    };
+
+  const searchMovies = async (title, page = 1) => {
+    if (!title) {
+        movies.value = []; 
+      totalResults.value = 0;
+      currentPage.value = 1;
+      return;
+    }
 
     loading.value = true;
     error.value = null;
-    movies.value = [];
-    currentPage.value = page;
+    
     try {
-      const url = `https://www.omdbapi.com/?s=${query}&apikey=${API_KEY}&page=${page}`;
+      let url = `https://www.omdbapi.com/?s=${title}&apikey=${API_KEY}&page=${page}`;
+      if (typeFilter.value) { 
+        url += `&type=${typeFilter.value}`;
+      }
+
       const response = await fetch(url);
       const data = await response.json();
 
       if (data.Response === 'True') {
         movies.value = data.Search;
-        totalResults.value = parseInt(data.totalResults);
+        totalResults.value = parseInt(data.totalResults,10);
       } else {
         movies.value = [];
         error.value = 'Фильмы не найдены. Попробуйте другой запрос.';
@@ -70,6 +83,17 @@ export const useMovieStore = defineStore('movie', () => {
     }
   };
 
+const getRandomMovies = (count = 10) => {
+    if (movies.value.length < count) {
+      return [...movies.value]; 
+    }
+    const shuffled = [...movies.value]
+      .sort(() => 0.5 - Math.random()); 
+    return shuffled.slice(0, count);
+  };
+
+   
+
 
   return {
     movies,
@@ -79,6 +103,9 @@ export const useMovieStore = defineStore('movie', () => {
     currentPage,
     searchMovies,
     sortedMovies,
-    setSort
+    setSort,
+    getRandomMovies,
+    typeFilter,
+    setTypeFilter
   };
 });

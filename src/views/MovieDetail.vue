@@ -5,7 +5,7 @@
     </div>
     <div v-else-if="movie" class="max-w-4xl mx-auto bg-gray-700 rounded-lg shadow-xl p-8 flex flex-col md:flex-row">
       <div class="md:w-1/3 flex-shrink-0">
-        <img :src="movie.Poster" :alt="movie.Title" class="w-full rounded-lg shadow-md" />
+        <img :src="movie.Poster !== 'N/A' ? movie.Poster : '/placeholder.png'" :alt="movie.Title" class="w-full rounded-lg shadow-md"  @error="e => e.target.src = '/placeholder.png'" />
       </div>
       <div class="md:w-2/3 md:pl-8 mt-6 md:mt-0">
         <h1 class="text-4xl font-bold mb-2">{{ movie.Title }}</h1>

@@ -13,9 +13,23 @@
             </RouterLink>
           </li>
           <li>
-            <RouterLink to="/favorites" class="text-lg hover:text-blue-400 transition-colors duration-300">
+            <RouterLink to="/favorites" class="relative pr-2 text-lg  hover:text-blue-400 transition-colors duration-300">
               Избранное
+              <span 
+            v-if="favoritesStore.favoritesCount > 0"
+            class="absolute -top-2 -right-3  bg-red-600 text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full"
+          >
+            {{ favoritesStore.favoritesCount }}
+          </span>
             </RouterLink>
+            </li>
+            <li>
+            <RouterLink 
+            :to="{ name: 'roulette' }" 
+            class="text-lg hover:text-blue-400 transition"
+          >
+            Рулетка 🎲
+          </RouterLink>
           </li>
           </ul>
       </nav>
@@ -25,4 +39,8 @@
 
 <script setup>
 import { RouterLink } from 'vue-router'
+import { useFavoritesStore } from '@/stores/favoritesStore';
+
+
+const favoritesStore = useFavoritesStore();
 </script>
